@@ -3,6 +3,7 @@ import Order from '../models/orderModel.js';
 import Product from '../models/productModel.js';
 import { calcPrices } from '../utils/calcPrices.js';
 import { verifyPayPalPayment, checkIfNewTransaction } from '../utils/paypal.js';
+import { sendOrderStatusUpdateEmail } from '../utils/notification.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -148,6 +149,35 @@ const getOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
+
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    // Update the order status and add to history
+    order.orderStatusHistory.push({
+      status,
+      updatedBy: req.user._id,
+    });
+
+    if (status === 'Delivered') {
+      order.isDelivered = true;
+      order.deliveredAt = Date.now();
+    } else if (status === 'Paid') {
+      order.isPaid = true;
+      order.paidAt = Date.now();
+    }
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+  await sendOrderStatusUpdateEmail(order.user.email, order._id, status);
+});
+
 export {
   addOrderItems,
   getMyOrders,
@@ -155,4 +185,5 @@ export {
   updateOrderToPaid,
   updateOrderToDelivered,
   getOrders,
+  updateOrderStatus,
 };

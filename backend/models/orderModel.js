@@ -72,6 +72,13 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    orderStatusHistory: [
+      {
+        status: { type: String, required: true },
+        date: { type: Date, default: Date.now },
+        updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Admin user who updated the status
+      },
+    ],
   },
   {
     timestamps: true,

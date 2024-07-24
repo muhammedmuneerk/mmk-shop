@@ -2,11 +2,25 @@ import { Table, Button } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
+import { useGetOrdersQuery, useUpdateOrderStatusMutation } from '../../slices/ordersApiSlice';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const OrderListScreen = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
+
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [updateOrderStatus] = useUpdateOrderStatusMutation();
+
+  const handleStatusChange = async (orderId) => {
+    try {
+      await updateOrderStatus({ orderId, status: selectedStatus });
+      toast.success('Order status updated');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   return (
     <>
@@ -61,13 +75,51 @@ const OrderListScreen = () => {
                     Details
                   </Button>
                 </td>
+                <td>
+                <select
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  value={selectedStatus}
+                >
+                  <option value=''>Select Status</option>
+                  <option value='Processing'>Processing</option>
+                  <option value='Shipped'>Shipped</option>
+                  <option value='Delivered'>Delivered</option>
+                  <option value='Cancelled'>Cancelled</option>
+                </select>
+                <Button onClick={() => handleStatusChange(order._id)}>Update Status</Button>
+              </td>
               </tr>
             ))}
+
+{orders.map((order) => (
+            <tr key={order._id}>
+              {/* Existing table data cells */}
+              {/* <td>
+                <select
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  value={selectedStatus}
+                >
+                  <option value=''>Select Status</option>
+                  <option value='Processing'>Processing</option>
+                  <option value='Shipped'>Shipped</option>
+                  <option value='Delivered'>Delivered</option>
+                  <option value='Cancelled'>Cancelled</option>
+                </select>
+                <Button onClick={() => handleStatusChange(order._id)}>Update Status</Button>
+              </td> */}
+            </tr>
+          ))}
+
           </tbody>
         </Table>
       )}
+      
+      
     </>
+
+    
   );
+  
 };
 
 export default OrderListScreen;
