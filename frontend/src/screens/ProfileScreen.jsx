@@ -52,6 +52,15 @@ const ProfileScreen = () => {
     }
   };
 
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(price);
+  };
+
   return (
     <Row>
       <Col md={3}>
@@ -129,7 +138,7 @@ const ProfileScreen = () => {
                 <tr key={order._id}>
                   <td>{order._id}</td>
                   <td>{order.createdAt.substring(0, 10)}</td>
-                  <td>{order.totalPrice}</td>
+                  <td>{formatPrice(order.totalPrice)}</td>
                   <td>
                     {order.isPaid ? (
                       order.paidAt.substring(0, 10)

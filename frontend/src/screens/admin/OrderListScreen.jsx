@@ -1,26 +1,24 @@
+// this file uses a formatPrice utility function. //
+import { formatPrice } from '../../utils/priceFormatter';
 import { Table, Button } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import { useGetOrdersQuery, useUpdateOrderStatusMutation } from '../../slices/ordersApiSlice';
+import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
 
 const OrderListScreen = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
 
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [updateOrderStatus] = useUpdateOrderStatusMutation();
-
-  const handleStatusChange = async (orderId) => {
-    try {
-      await updateOrderStatus({ orderId, status: selectedStatus });
-      toast.success('Order status updated');
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
+  // const formatPrice = (price) => {
+  //   return new Intl.NumberFormat('en-IN', {
+  //     style: 'currency',
+  //     currency: 'INR',
+  //     currencyDisplay: 'narrowSymbol', // Use narrow symbol to adjust the spacing
+  //     minimumFractionDigits: 2,
+  //     maximumFractionDigits: 2,
+  //   }).format(price).replace('₹', '₹\u00A0'); // Add a space after the currency symbol
+  // };
 
   return (
     <>
@@ -50,7 +48,7 @@ const OrderListScreen = () => {
                 <td>{order._id}</td>
                 <td>{order.user && order.user.name}</td>
                 <td>{order.createdAt.substring(0, 10)}</td>
-                <td>${order.totalPrice}</td>
+                <td>{formatPrice(order.totalPrice)}</td>
                 <td>
                   {order.isPaid ? (
                     order.paidAt.substring(0, 10)
@@ -75,51 +73,13 @@ const OrderListScreen = () => {
                     Details
                   </Button>
                 </td>
-                <td>
-                <select
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  value={selectedStatus}
-                >
-                  <option value=''>Select Status</option>
-                  <option value='Processing'>Processing</option>
-                  <option value='Shipped'>Shipped</option>
-                  <option value='Delivered'>Delivered</option>
-                  <option value='Cancelled'>Cancelled</option>
-                </select>
-                <Button onClick={() => handleStatusChange(order._id)}>Update Status</Button>
-              </td>
               </tr>
             ))}
-
-{orders.map((order) => (
-            <tr key={order._id}>
-              {/* Existing table data cells */}
-              {/* <td>
-                <select
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  value={selectedStatus}
-                >
-                  <option value=''>Select Status</option>
-                  <option value='Processing'>Processing</option>
-                  <option value='Shipped'>Shipped</option>
-                  <option value='Delivered'>Delivered</option>
-                  <option value='Cancelled'>Cancelled</option>
-                </select>
-                <Button onClick={() => handleStatusChange(order._id)}>Update Status</Button>
-              </td> */}
-            </tr>
-          ))}
-
           </tbody>
         </Table>
       )}
-      
-      
     </>
-
-    
   );
-  
 };
 
 export default OrderListScreen;

@@ -46,6 +46,15 @@ const ProductListScreen = () => {
     }
   };
 
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(price);
+  };
+
   return (
     <>
       <Row className='align-items-center'>
@@ -83,7 +92,7 @@ const ProductListScreen = () => {
                 <tr key={product._id}>
                   <td>{product._id}</td>
                   <td>{product.name}</td>
-                  <td>${product.price}</td>
+                  <td>{formatPrice(product.price)}</td>
                   <td>{product.category}</td>
                   <td>{product.brand}</td>
                   <td>

@@ -51,3 +51,20 @@ table th {
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
 }
+
+.custom-navbar {
+  background-color: #343a40; /* Dark gray */
+}
+
+.custom-navbar .nav-link {
+  color: white; /* White text for nav links */
+}
+
+.custom-navbar .nav-link:hover {
+  color: #ccc; /* Light gray on hover (optional) */
+}
+
+.logo {
+  width: 60px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+}

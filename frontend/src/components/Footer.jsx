@@ -8,7 +8,7 @@ const Footer = () => {
       <Container>
         <Row>
           <Col className='text-center py-3'>
-            <p>ProShop &copy; {currentYear}</p>
+            <p>MMKshop &copy; {currentYear}. Proudly serving quality products with passion and integrity. Built by Muhammed Muneer K.</p>
           </Col>
         </Row>
       </Container>
